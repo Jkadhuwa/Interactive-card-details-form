@@ -1,11 +1,34 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import React, { useState } from "react";
+import Head from "next/head";
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+import { CardBack, Form, CardFront, Thankyou } from "@/components";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  interface FormValues {
+    cardName?: string;
+    cardNumber?: string;
+    month?: string;
+    year?: string;
+    cvc?: string;
+  }
+
+  const [cardDetails, setCardDetails] = useState<FormValues>({
+    cardName: "",
+    year: "",
+    month: "",
+    cvc: "",
+    cardNumber: "",
+  });
+
+  const [validForm, setValidForm] = useState(false);
+
+
+  const { cardName, cardNumber, month, year, cvc } = cardDetails;
+  cardDetails.cardNumber = cardNumber ? cardNumber.replace(/(.{4})/g, "$1\t") : undefined;
+  
   return (
     <>
       <Head>
@@ -14,110 +37,29 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>src/pages/index.tsx</code>
-          </p>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
+      <main className="h-screen flex flex-col sm:flex-row justify-center items-center overflow-hidden">
+        <div className="bg-bgImgMobile sm:bg-bgImgDesktop w-full h-6 basis-1/3 sm:h-screen mb-12 sm:mb-0">
+          <div className="relative translate-y-28 translate-x-4 z-40 sm:translate-y-36 md:translate-x-1/4">
+            <CardFront
+              cardName={cardName}
+              cardNumber={cardNumber}
+              year={year}
+              month={month}
             />
           </div>
+          <div className="relative -translate-y-[7.15rem] translate-x-16 z-0 sm:translate-y-48 sm:translate-x-[15%] md:translate-x-1/3">
+            <CardBack cvc={cvc} />
+          </div>
         </div>
 
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
+        <div className="flex basis-2/3 justify-center mt-11 ">
+          {validForm ? (
+            <Thankyou setValidForm={setValidForm} />
+          ) : (
+            <Form setCardDetails={setCardDetails} setValidForm={setValidForm} />
+          )}
         </div>
       </main>
     </>
-  )
+  );
 }
